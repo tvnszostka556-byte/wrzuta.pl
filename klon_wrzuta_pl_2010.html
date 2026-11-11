@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrzuta.pl - Darmowy hosting muzyki, filmów i zdjęć (Klon 2010)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Stylistyka retro z lat 2008-2012 */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #e9e9e9;
+            color: #333333;
+        }
+
+        /* Gradienty charakterystyczne dla Web 2.0 */
+        .wrzuta-header-bg {
+            background: linear-gradient(to bottom, #4a4a4a 0%, #2b2b2b 100%);
+        }
+
+        .wrzuta-orange-bar {
+            background: linear-gradient(to bottom, #ff9900 0%, #e67300 100%);
+        }
+
+        .wrzuta-btn {
+            background: linear-gradient(to bottom, #ff9900 0%, #d86700 100%);
+            border: 1px solid #b35400;
+            text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        .wrzuta-btn:hover {
+            background: linear-gradient(to bottom, #ffaa2b 0%, #e67a00 100%);
+        }
+
+        .wrzuta-btn-green {
+            background: linear-gradient(to bottom, #72c02c 0%, #549b1a 100%);
+            border: 1px solid #3d7311;
+            text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        .wrzuta-btn-green:hover {
+            background: linear-gradient(to bottom, #82d434 0%, #61b01e 100%);
+        }
+
+        .box-header {
+            background: linear-gradient(to bottom, #dedede 0%, #c8c8c8 100%);
+            border-bottom: 1px solid #b5b5b5;
+        }
+
+        /* Retro Player Styling */
+        .player-container {
+            background: linear-gradient(to bottom, #2a2a2a 0%, #151515 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #d4d4d4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #999999;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666666;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- NAWIGACJA GÓRNA - TOPBAR -->
+    <div class="wrzuta-header-bg text-gray-300 text-xs py-1 px-4 border-b border-gray-700 flex justify-between items-center">
+        <div class="flex gap-4">
+            <span><i class="fa-solid fa-cloud-arrow-up mr-1 text-orange-400"></i> Wrzuta.pl - Twój darmowy dysk w sieci!</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-users mr-1"></i> Społeczność: 1,420,812 użytkowników</span>
+        </div>
+        <div class="flex gap-3">
+            <a href="#" class="hover:underline text-gray-200">Zaloguj się</a>
+            <span>|</span>
+            <a href="#" class="hover:underline text-orange-400 font-bold">Zarejestruj się za darmo</a>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER Z LOGO I WYSZUKIWARKĄ -->
+    <header class="bg-white border-b-2 border-orange-500 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- LOGO WRZUTA -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('all')">
+                <div class="relative bg-orange-500 text-white font-black text-3xl px-3 py-1 rounded-bl-xl rounded-tr-xl tracking-tighter shadow-md flex items-center">
+                    Wrzuta
+                    <span class="text-xs bg-black text-white px-1.5 py-0.5 rounded ml-1 font-mono uppercase font-normal">.pl</span>
+                    <div class="absolute -top-2 -right-2 text-yellow-300 text-xs"><i class="fa-solid fa-star"></i></div>
+                </div>
+                <div class="hidden sm:block text-xs text-gray-500 font-sans italic leading-tight pl-2 border-l border-gray-300">
+                    Wrzuć plik.<br>Podziel się ze światem!
+                </div>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="flex-1 max-w-md">
+                <form id="searchForm" onsubmit="handleSearch(event)" class="flex">
+                    <input type="text" id="searchInput" placeholder="Szukaj MP3, filmów, śmiesznych fotek..." 
+                           class="w-full px-3 py-2 border-2 border-r-0 border-orange-400 rounded-l focus:outline-none text-sm">
+                    <button type="submit" class="wrzuta-btn text-white font-bold px-5 py-2 rounded-r flex items-center justify-center">
+                        <i class="fa-solid fa-magnifying-glass mr-1"></i> Szukaj
+                    </button>
+                </form>
+            </div>
+
+            <!-- BUTTON WRZUĆ PLIK -->
+            <div>
+                <button onclick="switchTab('upload')" class="wrzuta-btn-green text-white font-bold px-4 py-2 rounded shadow flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-circle-plus text-lg"></i>
+                    <span>WRZUĆ PLIK</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENU ZAKŁADEK WEB 2.0 -->
+        <nav class="wrzuta-orange-bar text-white text-sm font-bold shadow-inner">
+            <div class="max-w-6xl mx-auto px-4 flex flex-wrap gap-1">
+                <button onclick="switchTab('all')" id="tab-all" class="nav-tab px-4 py-2 hover:bg-orange-600 border-r border-orange-400/40 flex items-center gap-1.5 bg-orange-700/40">
+                    <i class="fa-solid fa-house text-xs"></i> Główna
+                </button>
+                <button onclick="switchTab('audio')" id="tab-audio" class="nav-tab px-4 py-2 hover:bg-orange-600 border-r border-orange-400/40 flex items-center gap-1.5">
+                    <i class="fa-solid fa-music text-xs"></i> Muzyka (MP3)
+                </button>
+                <button onclick="switchTab('video')" id="tab-video" class="nav-tab px-4 py-2 hover:bg-orange-600 border-r border-orange-400/40 flex items-center gap-1.5">
+                    <i class="fa-solid fa-film text-xs"></i> Filmy
+                </button>
+                <button onclick="switchTab('images')" id="tab-images" class="nav-tab px-4 py-2 hover:bg-orange-600 border-r border-orange-400/40 flex items-center gap-1.5">
+                    <i class="fa-solid fa-image text-xs"></i> Zdjęcia i Memy
+                </button>
+                <button onclick="switchTab('upload')" id="tab-upload" class="nav-tab px-4 py-2 hover:bg-orange-600 border-r border-orange-400/40 flex items-center gap-1.5">
+                    <i class="fa-solid fa-upload text-xs"></i> Dodaj Plik
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- KONTENER GŁÓWNY -->
+    <main class="max-w-6xl mx-auto w-full px-4 py-5 flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- LEWA KOLUMNA / SEKCJA GŁÓWNA (3/4) -->
+        <section class="lg:col-span-3 space-y-6">
+
+            <!-- BANNER INFORMACYJNY RETRO -->
+            <div class="bg-yellow-50 border-2 border-yellow-300 rounded p-3 text-xs text-yellow-900 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn text-orange-500 text-lg"></i>
+                    <span><strong>HOT 2010:</strong> Największa baza podziemnego polskiego rapu i klasyków z Gacha / YouTube! Słuchaj bez limitów.</span>
+                </div>
+                <span class="text-gray-400 font-mono text-[10px]">v2.4.1 (2010)</span>
+            </div>
+
+            <!-- SEKCJA UPLOAD (DOMYŚLNIE UKRYTA LUB POKAZYWANA PO KLIKNIĘCIU) -->
+            <div id="uploadSection" class="hidden bg-white border border-gray-300 rounded shadow-sm overflow-hidden">
+                <div class="box-header px-4 py-2 font-bold text-gray-700 flex justify-between items-center text-sm">
+                    <span><i class="fa-solid fa-cloud-arrow-up text-orange-500 mr-1"></i> Wgrywanie nowego pliku na Wrzutę</span>
+                    <span class="text-xs text-gray-500">Max rozmiar pliku: 50 MB</span>
+                </div>
+                <div class="p-6">
+                    <form id="uploadForm" onsubmit="handleFileUpload(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tytuł utworu / pliku:</label>
+                            <input type="text" id="uploadTitle" required placeholder="np. Słoń - Nowy Track (Demo 2010)" 
+                                   class="w-full border border-gray-300 p-2 rounded text-sm focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Wykonawca / Autor:</label>
+                                <input type="text" id="uploadArtist" required placeholder="np. Słoń / Demonologia" 
+                                       class="w-full border border-gray-300 p-2 rounded text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kategoria:</label>
+                                <select id="uploadCategory" class="w-full border border-gray-300 p-2 rounded text-sm bg-white focus:border-orange-500 focus:outline-none">
+                                    <option value="audio">Muzyka (Audio MP3)</option>
+                                    <option value="video">Wideo / Klip</option>
+                                    <option value="images">Zdjęcie / Grafika</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Wybierz plik z dysku (MP3, WAV, OGG):</label>
+                            <input type="file" id="uploadFile" accept="audio/*" class="w-full text-xs text-gray-500 border border-gray-200 p-2 rounded bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tagi (po przecinku):</label>
+                            <input type="text" id="uploadTags" placeholder="hiphop, rap, 2010, pliku, demko" 
+                                   class="w-full border border-gray-300 p-2 rounded text-sm focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="pt-2 flex justify-end gap-3">
+                            <button type="button" onclick="switchTab('all')" class="px-4 py-2 text-xs border border-gray-300 rounded hover:bg-gray-100">Anuluj</button>
+                            <button type="submit" class="wrzuta-btn-green text-white font-bold px-6 py-2 rounded text-sm">
+                                <i class="fa-solid fa-upload mr-1"></i> WRZUĆ PLIK
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- LISTA PLIKÓW / PLAYLISTA WRZUTY -->
+            <div class="bg-white border border-gray-300 rounded shadow-sm overflow-hidden">
+                <div class="box-header px-4 py-2 font-bold text-gray-800 flex justify-between items-center text-sm">
+                    <span id="sectionTitle"><i class="fa-solid fa-fire text-orange-500 mr-1.5"></i> Najpopularniejsze Wrzyty (Top MP3 & Rap)</span>
+                    <span class="text-xs text-gray-500 font-normal">Sortuj: <a href="#" class="text-orange-600 underline font-bold">Najnowsze</a> | Popularne</span>
+                </div>
+
+                <!-- TELA PLIKÓW LISTA -->
+                <div id="filesContainer" class="divide-y divide-gray-200">
+                    <!-- Wygenerowane dynamicznie przez JS -->
+                </div>
+            </div>
+
+            <!-- RETRO ODTWARZACZ WRZUTY (BOTTOM PLAYER / DETAILED PLAYER) -->
+            <div class="player-container rounded-lg p-4 text-white border border-gray-700 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    
+                    <!-- CANVAS EQUALIZER / VISUALIZER -->
+                    <div class="w-full md:w-48 h-24 bg-black rounded border border-gray-800 relative flex items-center justify-center overflow-hidden">
+                        <canvas id="visualizerCanvas" class="w-full h-full absolute inset-0"></canvas>
+                        <div id="visualizerPlaceholder" class="text-gray-600 text-center text-xs z-10 font-mono">
+                            <i class="fa-solid fa-wave-square text-2xl text-orange-500 mb-1 block"></i>
+                            Wizualizator Audio
+                        </div>
+                    </div>
+
+                    <!-- KONTROLI I INFORMACJE O UTWORZE -->
+                    <div class="flex-1 w-full space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="bg-orange-600 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded text-white tracking-wider">Teraz Odtwarzane</span>
+                                <h3 id="currentTrackTitle" class="text-base font-bold text-orange-400 mt-1 line-clamp-1">Słoń - Ania</h3>
+                                <p id="currentTrackArtist" class="text-xs text-gray-400">Album: Brain Dead Familia (2010)</p>
+                            </div>
+                            <div class="text-right">
+                                <span id="timeDisplay" class="font-mono text-sm text-green-400 font-bold">00:00 / 00:00</span>
+                            </div>
+                        </div>
+
+                        <!-- PROGRESS BAR -->
+                        <div class="space-y-1">
+                            <input type="range" id="progressBar" min="0" value="0" step="0.1" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-orange-500">
+                        </div>
+
+                        <!-- CONTROL BUTTONS -->
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex items-center gap-2">
+                                <button onclick="prevTrack()" class="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded text-sm transition">
+                                    <i class="fa-solid fa-backward-step"></i>
+                                </button>
+                                <button onclick="togglePlay()" id="mainPlayBtn" class="w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-lg transition">
+                                    <i class="fa-solid fa-play text-base"></i>
+                                </button>
+                                <button onclick="nextTrack()" class="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded text-sm transition">
+                                    <i class="fa-solid fa-forward-step"></i>
+                                </button>
+                            </div>
+
+                            <!-- VOLUME & EXTRA CONTROLS -->
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1">
+                                    <i class="fa-solid fa-volume-high text-xs text-gray-400"></i>
+                                    <input type="range" id="volumeBar" min="0" max="1" step="0.05" value="0.8" 
+                                           class="w-16 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-orange-500">
+                                </div>
+                                <a id="downloadTrackBtn" href="#" download class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded flex items-center gap-1 transition">
+                                    <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Pobierz MP3</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PRAWA KOLUMNA / PANEL BOCZNY (1/4) -->
+        <aside class="space-y-6">
+
+            <!-- STATYSTYKI KONTRAKTU WRZUTY -->
+            <div class="bg-white border border-gray-300 rounded shadow-sm overflow-hidden">
+                <div class="box-header px-3 py-2 font-bold text-gray-700 text-xs uppercase flex items-center gap-1">
+                    <i class="fa-solid fa-chart-simple text-orange-500"></i> Statystyki serwisu
+                </div>
+                <div class="p-3 text-xs space-y-2 text-gray-600 font-sans">
+                    <div class="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Wszystkich MP3:</span>
+                        <span class="font-bold text-gray-800">4,891,204</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-100 pb-1">
+                        <span>Odsłuchano dzisiaj:</span>
+                        <span class="font-bold text-orange-600">892,103 razy</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Online teraz:</span>
+                        <span class="font-bold text-green-600">14,290 graczy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POPULARNE TAGI (TAG CLOUD 2010 STYLE) -->
+            <div class="bg-white border border-gray-300 rounded shadow-sm overflow-hidden">
+                <div class="box-header px-3 py-2 font-bold text-gray-700 text-xs uppercase flex items-center gap-1">
+                    <i class="fa-solid fa-tags text-orange-500"></i> Popularne Tagi Rap & Gacha
+                </div>
+                <div class="p-3 flex flex-wrap gap-1.5 text-xs">
+                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded font-bold hover:underline cursor-pointer" onclick="filterByTag('Słoń')">#Słoń</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer" onclick="filterByTag('Demonologia')">#Demonologia</span>
+                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded font-bold hover:underline cursor-pointer" onclick="filterByTag('Gacha')">#GachaLife</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer" onclick="filterByTag('South Blunt System')">#SouthBluntSystem</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer" onclick="filterByTag('K.M.S')">#K.M.S</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer" onclick="filterByTag('Rap2010')">#PolskiRap2010</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer" onclick="filterByTag('Horrorcore')">#Horrorcore</span>
+                </div>
+            </div>
+
+            <!-- REKLAMA RETRO / BOX PROMO -->
+            <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded p-4 text-center border-2 border-blue-400 shadow-md">
+                <span class="text-[10px] text-blue-300 uppercase tracking-widest font-mono">SPONSOROWANE</span>
+                <h4 class="font-black text-yellow-300 text-sm mt-1">POBIERAJ MP3 DARMOWYM PROGRAMEM!</h4>
+                <p class="text-xs text-blue-100 mt-2">Pobieraj muzykę na swój telefon i odtwarzacz MP3/MP4 bez limitów prędkości!</p>
+                <button onclick="alert('Dziękujemy za kliknięcie w retro reklamę z 2010 roku!')" 
+                        class="mt-3 w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-2 rounded text-xs shadow">
+                    POBIERZ PROGRAM WZ-DOWNLOADER
+                </button>
+            </div>
+
+            <!-- REGULAMIN I INFO -->
+            <div class="text-[11px] text-gray-500 space-y-1 px-1">
+                <p>© 2006-2010 Wrzuta.pl. Wszystkie prawa zastrzeżone.</p>
+                <p>Pliki audio przechowywane są w celach promocyjnych.</p>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- UKRYTY ELEMENT AUDIO DLA ODTWARZACZA -->
+    <audio id="audioElement" preload="metadata"></audio>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-800 text-gray-400 text-xs py-6 mt-8 border-t-4 border-orange-500">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="bg-orange-500 text-white font-bold px-2 py-0.5 rounded text-sm">Wrzuta</span>
+                <span>Klon Retro 2010 - Projekt wspominkowy</span>
+            </div>
+            <div class="flex gap-4">
+                <a href="#" class="hover:underline">Regulamin</a>
+                <a href="#" class="hover:underline">Pomoc & FAQ</a>
+                <a href="#" class="hover:underline">Zgłoś naruszenie DMCA</a>
+                <a href="#" class="hover:underline">Kontakt / Reklama</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SKRYPT LOGIKI I ODTWARZACZA -->
+    <script>
+        // BAZA DANYCH UTWORÓW I PLIKÓW RETRO WRZUTY (Z DARMOWYMI PROBKAMI AUDIO MP3)
+        const initialTracks = [
+            {
+                id: 1,
+                title: "Słoń - Ania",
+                artist: "Słoń (Brain Dead Familia)",
+                category: "audio",
+                duration: "04:12",
+                views: "1,249,021",
+                date: "2010-09-15",
+                user: "HorrorRap_Fan",
+                tags: ["Słoń", "Demonologia", "Horrorcore", "Ania"],
+                // Dźwięk licencjonowany Creative Commons / Royalty Free dla celów demonstracyjnych
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            },
+            {
+                id: 2,
+                title: "South Blunt System - Była chłodna",
+                artist: "South Blunt System (I'm Seeing)",
+                category: "audio",
+                duration: "03:45",
+                views: "982,410",
+                date: "2013-02-10",
+                user: "Gacha_Serial_Edits",
+                tags: ["South Blunt System", "Była chłodna", "Gacha", "Im Seeing"],
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            },
+            {
+                id: 3,
+                title: "K.M.S - Ostatni Krok (Psychologiczny Rap)",
+                artist: "K.M.S",
+                category: "audio",
+                duration: "03:58",
+                views: "431,090",
+                date: "2012-05-18",
+                user: "UndergroundRap_PL",
+                tags: ["K.M.S", "Rap2010", "Podziemie"],
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+            },
+            {
+                id: 4,
+                title: "Słoń & Mikser - Nie Słuchaj",
+                artist: "Demonologia",
+                category: "audio",
+                duration: "04:30",
+                views: "812,034",
+                date: "2010-10-04",
+                user: "BDF_Official_Fan",
+                tags: ["Słoń", "Demonologia", "Mikser"],
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            },
+            {
+                id: 5,
+                title: "Popularne Seriale W Pigułce (Gacha Edycja #4)",
+                artist: "GachaMaster_PL",
+                category: "video",
+                duration: "08:15",
+                views: "521,900",
+                date: "2015-11-20",
+                user: "GachaMaster_PL",
+                tags: ["Gacha", "Seriale"],
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+            },
+            {
+                id: 6,
+                title: "WSRH (Słoń & Shellerini) - Brain Dead",
+                artist: "WSRH",
+                category: "audio",
+                duration: "03:50",
+                views: "670,120",
+                date: "2012-03-14",
+                user: "PoznanRapVibe",
+                tags: ["WSRH", "Słoń", "Shellerini"],
+                audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
+            }
+        ];
+
+        let tracks = [...initialTracks];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let activeCategory = 'all';
+
+        // ELEMENTY DOM
+        const audioElement = document.getElementById('audioElement');
+        const mainPlayBtn = document.getElementById('mainPlayBtn');
+        const progressBar = document.getElementById('progressBar');
+        const volumeBar = document.getElementById('volumeBar');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const currentTrackTitle = document.getElementById('currentTrackTitle');
+        const currentTrackArtist = document.getElementById('currentTrackArtist');
+        const downloadTrackBtn = document.getElementById('downloadTrackBtn');
+        const filesContainer = document.getElementById('filesContainer');
+        const uploadSection = document.getElementById('uploadSection');
+        const sectionTitle = document.getElementById('sectionTitle');
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            renderFilesList(tracks);
+            loadTrack(0);
+
+            // Audio Events
+            audioElement.addEventListener('timeupdate', updateProgress);
+            audioElement.addEventListener('ended', nextTrack);
+            
+            progressBar.addEventListener('input', () => {
+                audioElement.currentTime = progressBar.value;
+            });
+
+            volumeBar.addEventListener('input', () => {
+                audioElement.volume = volumeBar.value;
+            });
+
+            // Vizualizer initialization
+            initVisualizer();
+        });
+
+        // RENDEROWANIE LISTY PLIKÓW (TYPU WRZUTA)
+        function renderFilesList(filesToRender) {
+            filesContainer.innerHTML = '';
+            
+            if (filesToRender.length === 0) {
+                filesContainer.innerHTML = `
+                    <div class="p-8 text-center text-gray-500 font-sans">
+                        <i class="fa-solid fa-folder-open text-4xl mb-2 text-gray-300"></i>
+                        <p>Brak wyników w tej kategorii lub wyszukiwaniu.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filesToRender.forEach((file, index) => {
+                const isCurrent = currentTrackIndex === index && isPlaying;
+                const fileRow = document.createElement('div');
+                fileRow.className = `p-3 hover:bg-orange-50 transition flex items-center justify-between gap-3 ${isCurrent ? 'bg-orange-100/70 border-l-4 border-orange-500' : ''}`;
+                
+                // Wybór ikony kategorii
+                let iconClass = "fa-file-audio text-orange-500";
+                if (file.category === 'video') iconClass = "fa-file-video text-blue-500";
+                if (file.category === 'images') iconClass = "fa-file-image text-green-500";
+
+                fileRow.innerHTML = `
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <button onclick="playTrackByIndex(${index})" class="w-9 h-9 rounded-full ${isCurrent ? 'bg-orange-600' : 'bg-gray-800'} hover:bg-orange-500 text-white flex items-center justify-center shrink-0 shadow">
+                            <i class="fa-solid ${isCurrent ? 'fa-pause' : 'fa-play'} text-xs"></i>
+                        </button>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-bold text-sm text-gray-800 truncate hover:text-orange-600 cursor-pointer" onclick="playTrackByIndex(${index})">
+                                <i class="fa-solid ${iconClass} mr-1 text-xs"></i> ${file.title}
+                            </h4>
+                            <div class="text-xs text-gray-500 flex flex-wrap gap-2 mt-0.5 font-sans">
+                                <span>Autor: <strong class="text-gray-700">${file.artist}</strong></span>
+                                <span>• Wgrał: ${file.user}</span>
+                                <span>• Odsłuchów: ${file.views}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-xs font-mono text-gray-500 hidden sm:inline">${file.duration}</span>
+                        <a href="${file.audioUrl}" download target="_blank" class="px-2.5 py-1 bg-gray-200 hover:bg-green-600 hover:text-white rounded text-xs font-bold text-gray-700 transition flex items-center gap-1">
+                            <i class="fa-solid fa-download text-[10px]"></i> <span class="hidden md:inline">MP3</span>
+                        </a>
+                    </div>
+                `;
+                filesContainer.appendChild(fileRow);
+            });
+        }
+
+        // KONTROLA ODTWARZACZA
+        function loadTrack(index) {
+            if (index < 0 || index >= tracks.length) return;
+            currentTrackIndex = index;
+            const track = tracks[currentTrackIndex];
+            
+            audioElement.src = track.audioUrl;
+            currentTrackTitle.textContent = track.title;
+            currentTrackArtist.textContent = `Wykonawca / Album: ${track.artist}`;
+            downloadTrackBtn.href = track.audioUrl;
+            
+            renderFilesList(tracks);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audioElement.pause();
+                isPlaying = false;
+                mainPlayBtn.innerHTML = '<i class="fa-solid fa-play text-base"></i>';
+            } else {
+                audioElement.play().then(() => {
+                    isPlaying = true;
+                    mainPlayBtn.innerHTML = '<i class="fa-solid fa-pause text-base"></i>';
+                }).catch(e => {
+                    console.log("Auto-play zapobieżony przez przeglądarkę:", e);
+                });
+            }
+            renderFilesList(tracks);
+        }
+
+        function playTrackByIndex(index) {
+            if (currentTrackIndex === index && isPlaying) {
+                togglePlay();
+            } else {
+                loadTrack(index);
+                togglePlay();
+            }
+        }
+
+        function prevTrack() {
+            let index = currentTrackIndex - 1;
+            if (index < 0) index = tracks.length - 1;
+            playTrackByIndex(index);
+        }
+
+        function nextTrack() {
+            let index = currentTrackIndex + 1;
+            if (index >= tracks.length) index = 0;
+            playTrackByIndex(index);
+        }
+
+        function updateProgress() {
+            if (audioElement.duration) {
+                progressBar.max = audioElement.duration;
+                progressBar.value = audioElement.currentTime;
+                
+                const curMins = Math.floor(audioElement.currentTime / 60);
+                const curSecs = Math.floor(audioElement.currentTime % 60);
+                const durMins = Math.floor(audioElement.duration / 60);
+                const durSecs = Math.floor(audioElement.duration % 60);
+
+                timeDisplay.textContent = 
+                    `${curMins < 10 ? '0' : ''}${curMins}:${curSecs < 10 ? '0' : ''}${curSecs} / ` +
+                    `${durMins < 10 ? '0' : ''}${durMins}:${durSecs < 10 ? '0' : ''}${durSecs}`;
+            }
+        }
+
+        // ZAKŁADKI I FILTROWANIE
+        function switchTab(category) {
+            activeCategory = category;
+            
+            // Stylizacja aktywnych przycisków
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('bg-orange-700/40', 'bg-orange-800/60');
+            });
+
+            const activeBtn = document.getElementById(`tab-${category}`);
+            if (activeBtn) activeBtn.classList.add('bg-orange-700/40');
+
+            if (category === 'upload') {
+                uploadSection.classList.remove('hidden');
+                sectionTitle.innerHTML = `<i class="fa-solid fa-upload text-orange-500 mr-1.5"></i> Dodawanie Pliku`;
+            } else {
+                uploadSection.classList.add('hidden');
+                
+                if (category === 'all') {
+                    sectionTitle.innerHTML = `<i class="fa-solid fa-fire text-orange-500 mr-1.5"></i> Najpopularniejsze Wrzuty (Top MP3 & Rap)`;
+                    renderFilesList(tracks);
+                } else {
+                    const filtered = tracks.filter(t => t.category === category);
+                    sectionTitle.innerHTML = `<i class="fa-solid fa-list text-orange-500 mr-1.5"></i> Kategoria: ${category.toUpperCase()}`;
+                    renderFilesList(filtered);
+                }
+            }
+        }
+
+        // WYSZUKIWARKA
+        function handleSearch(e) {
+            e.preventDefault();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) return;
+
+            const results = tracks.filter(t => 
+                t.title.toLowerCase().includes(query) || 
+                t.artist.toLowerCase().includes(query) ||
+                t.tags.some(tag => tag.toLowerCase().includes(query))
+            );
+
+            sectionTitle.innerHTML = `<i class="fa-solid fa-magnifying-glass text-orange-500 mr-1.5"></i> Wyniki wyszukiwania dla: "${query}"`;
+            renderFilesList(results);
+        }
+
+        function filterByTag(tagName) {
+            document.getElementById('searchInput').value = tagName;
+            const results = tracks.filter(t => t.tags.some(tag => tag.toLowerCase() === tagName.toLowerCase()));
+            sectionTitle.innerHTML = `<i class="fa-solid fa-tag text-orange-500 mr-1.5"></i> Pliki z tagiem: #${tagName}`;
+            renderFilesList(results);
+        }
+
+        // SYMULACJA WGRYWANIA NOWEGO PLIKU MP3
+        function handleFileUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('uploadTitle').value;
+            const artist = document.getElementById('uploadArtist').value;
+            const category = document.getElementById('uploadCategory').value;
+            const tagsInput = document.getElementById('uploadTags').value;
+            const fileInput = document.getElementById('uploadFile');
+
+            let customAudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3";
+            
+            // Jeśli użytkownik załączył plik z komputera:
+            if (fileInput.files && fileInput.files[0]) {
+                customAudioUrl = URL.createObjectURL(fileInput.files[0]);
+            }
+
+            const newFile = {
+                id: tracks.length + 1,
+                title: title,
+                artist: artist,
+                category: category,
+                duration: "03:30",
+                views: "1",
+                date: new Date().toISOString().split('T')[0],
+                user: "Ty_Sam",
+                tags: tagsInput.split(',').map(t => t.trim()),
+                audioUrl: customAudioUrl
+            };
+
+            tracks.unshift(newFile);
+            alert("Plik został pomyślnie wrzucony na Wrzuta.pl!");
+            
+            // Czyszczenie formularza i przejście do listy
+            document.getElementById('uploadForm').reset();
+            switchTab('all');
+            playTrackByIndex(0);
+        }
+
+        // CANVAS AUDIO VISUALIZER (RETRO EFEKT FALI Z LAT 2010)
+        function initVisualizer() {
+            const canvas = document.getElementById('visualizerCanvas');
+            const ctx = canvas.getContext('2d');
+            let animationFrame;
+
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Generowanie animowanej fali retro
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                const bars = 30;
+                const barWidth = canvas.width / bars;
+
+                for (let i = 0; i < bars; i++) {
+                    // Jeśli utwór jest odtwarzany - wysokie, dynamiczne skoki barów
+                    const height = isPlaying 
+                        ? Math.random() * (canvas.height - 10) + 5 
+                        : 4;
+
+                    const x = i * barWidth;
+                    const y = canvas.height - height;
+
+                    // Gradient w stylu retro zielono-pomarańczowej korekcji
+                    const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+                    gradient.addColorStop(0, '#72c02c');
+                    gradient.addColorStop(0.6, '#ffaa2b');
+                    gradient.addColorStop(1, '#ff3300');
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, barWidth - 2, height);
+                }
+
+                animationFrame = requestAnimationFrame(draw);
+            }
+
+            draw();
+        }
+    </script>
+</body>
+</html>
